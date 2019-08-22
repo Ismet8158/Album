@@ -37,7 +37,7 @@ export default {
   methods: {
     fetchData() {
       axios
-        .get("https://jsonplaceholder.typicode.com/albums")
+        .get("/api/albums")
         .then(response => {
           this.albums = response.data;
         })

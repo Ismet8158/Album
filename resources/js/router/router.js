@@ -6,6 +6,7 @@ import Albums from "./../components/Albums.vue";
 import Login from "./../components/Login.vue";
 import Favorites from "./../components/Favorites.vue";
 import Photos from "./../components/Photos.vue";
+import Register from "./../components/Register.vue";
 
 Vue.use(Router);
 
@@ -13,31 +14,40 @@ const router = new Router({
     routes: [
         {
             path: "/",
+            name: "home",
             component: App,
             meta: { requiresAuth: true }
         },
         {
             path: "/login",
+            name: "login",
             component: Login
         },
         {
             path: "/favorites",
+            name: "favorites",
             component: Favorites
         },
         {
             path: "/albums",
+            name: "albums",
             component: Albums
         },
         {
             path: "/albums/:id",
             component: Photos
+        },
+        {
+            path: "/register",
+            name: "register",
+            component: Register
         }
     ]
 });
 
 router.beforeEach((to, from, next) => {
     if (to.matched.some(record => record.meta.requiresAuth)) {
-        if (true) {
+        if (localStorage.getItem("logged")) {
             next({
                 path: "/login"
             });

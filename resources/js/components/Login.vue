@@ -1,22 +1,20 @@
 <template>
   <b-container class="loginContainer">
     <b-card title="Авторизация">
-      <b-form @submit="onSubmit">
-        <b-form-row>
-          <b-col>
-            <b-form-input type="text" placeholder="Логин" required></b-form-input>
-            <b-form-input type="password" placeholder="Пароль" required></b-form-input>
-          </b-col>
-        </b-form-row>
-        <b-form-row>
-          <b-col>
-            <b-button type="submit">Войти</b-button>
-          </b-col>
-          <b-col>
-            <router-link to>Зарегистрироваться</router-link>
-          </b-col>
-        </b-form-row>
-      </b-form>
+      <b-row>
+        <b-col>
+          <input type="text" placeholder="Логин" required />
+          <input type="password" placeholder="Пароль" required />
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col>
+          <button @click="onSubmit()">Войти</button>
+        </b-col>
+        <b-col>
+          <router-link to="/register">Зарегистрироваться</router-link>
+        </b-col>
+      </b-row>
     </b-card>
   </b-container>
 </template>
@@ -30,7 +28,7 @@ export default {
   methods: {
     onSubmit() {
       localStorage.setItem("logged", true);
-      this.$router.replace("/");
+      this.$router.push("/");
     }
   }
 };
