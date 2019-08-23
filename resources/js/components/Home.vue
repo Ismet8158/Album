@@ -35,6 +35,12 @@ export default {
   name: "home",
   data() {
     return {};
+  },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      console.log("hi");
+      vm.$router.push("/favorites");
+    });
   }
 };
 </script>

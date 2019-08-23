@@ -2,19 +2,19 @@
   <b-card title="Регистрация">
     <b-row>
       <b-col>
-        <input v-model="login" type="text" placeholder="Логин" required />
+        <input v-model="user.login" type="text" placeholder="Логин" required />
       </b-col>
     </b-row>
     <b-row>
       <b-col>
-        <input v-model="password" type="password" placeholder="Пароль" required />
+        <input v-model="user.password" type="password" placeholder="Пароль" required />
       </b-col>
     </b-row>
     <b-row>
       <b-col>
         <input
           id="confirmedPassword"
-          v-model="confirmedPassword"
+          v-model="user.confirmedPassword"
           type="password"
           placeholder="Подтвердите пароль"
           required
@@ -42,15 +42,25 @@ export default {
   data() {
     return {
       error: "",
-      login: "",
-      password: "",
-      confirmedPassword: ""
+      user: {
+        login: "",
+        password: "",
+        confirmedPassword: ""
+      }
     };
   },
   methods: {
     onSubmit() {
-      if (this.password === this.confirmedPassword) {
-      } else this.error = "Пароли не совпадают";
+      axios
+        .post("/api/register", this.user)
+        .then(response => {
+          if (response.data.token === undefined)
+            this.error = Object.values(response.data).join(" ");
+          else this.$router.replace("/login");
+        })
+        .catch(error => {
+          console.log(error);
+        });
     }
   }
 };

@@ -2018,6 +2018,12 @@ __webpack_require__.r(__webpack_exports__);
   name: "home",
   data: function data() {
     return {};
+  },
+  beforeRouteEnter: function beforeRouteEnter(to, from, next) {
+    next(function (vm) {
+      console.log("hi");
+      vm.$router.push("/favorites");
+    });
   }
 });
 
@@ -2032,6 +2038,8 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
 //
 //
 //
@@ -2053,15 +2061,35 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "login",
   data: function data() {
-    return {};
+    return {
+      error: "",
+      user: {
+        login: "",
+        password: "",
+        remember: false
+      }
+    };
   },
   methods: {
     onSubmit: function onSubmit() {
-      localStorage.setItem("logged", true);
-      this.$router.push("/");
+      var _this = this;
+
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.post("/api/login", this.user).then(function (response) {
+        if (response.data.token === undefined) _this.error = response.data;else _this.$router.replace("/favorites");
+      })["catch"](function (error) {
+        console.log(error);
+      });
     }
   }
 });
@@ -2202,14 +2230,22 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       error: "",
-      login: "",
-      password: "",
-      confirmedPassword: ""
+      user: {
+        login: "",
+        password: "",
+        confirmedPassword: ""
+      }
     };
   },
   methods: {
     onSubmit: function onSubmit() {
-      if (this.password === this.confirmedPassword) {} else this.error = "Пароли не совпадают";
+      var _this = this;
+
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.post("/api/register", this.user).then(function (response) {
+        if (response.data.token === undefined) _this.error = Object.values(response.data).join(" ");else _this.$router.replace("/login");
+      })["catch"](function (error) {
+        console.log(error);
+      });
     }
   }
 });
@@ -30419,7 +30455,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.loginContainer[data-v-6bdc8b8e] {\r\n  padding: 0;\n}\r\n", ""]);
+exports.push([module.i, "\n.error[data-v-6bdc8b8e] {\r\n  color: crimson;\n}\r\n", ""]);
 
 // exports
 
@@ -35397,62 +35433,142 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c(
-    "b-container",
-    { staticClass: "loginContainer" },
+    "b-card",
+    { attrs: { title: "Авторизация" } },
     [
       _c(
-        "b-card",
-        { attrs: { title: "Авторизация" } },
+        "b-row",
         [
-          _c(
-            "b-row",
-            [
-              _c("b-col", [
-                _c("input", {
-                  attrs: { type: "text", placeholder: "Логин", required: "" }
-                }),
-                _vm._v(" "),
-                _c("input", {
-                  attrs: {
-                    type: "password",
-                    placeholder: "Пароль",
-                    required: ""
+          _c("b-col", [
+            _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.user.login,
+                  expression: "user.login"
+                }
+              ],
+              attrs: { type: "text", placeholder: "Логин", required: "" },
+              domProps: { value: _vm.user.login },
+              on: {
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
                   }
-                })
+                  _vm.$set(_vm.user, "login", $event.target.value)
+                }
+              }
+            }),
+            _vm._v(" "),
+            _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.user.password,
+                  expression: "user.password"
+                }
+              ],
+              attrs: { type: "password", placeholder: "Пароль", required: "" },
+              domProps: { value: _vm.user.password },
+              on: {
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.$set(_vm.user, "password", $event.target.value)
+                }
+              }
+            })
+          ])
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "b-row",
+        [
+          _c("b-col", [
+            _c(
+              "button",
+              {
+                on: {
+                  click: function($event) {
+                    return _vm.onSubmit()
+                  }
+                }
+              },
+              [_vm._v("Войти")]
+            )
+          ]),
+          _vm._v(" "),
+          _c("b-col", [
+            _c("label", { attrs: { for: "remember" } }, [
+              _vm._v("Запомнить меня")
+            ]),
+            _vm._v(" "),
+            _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.user.remember,
+                  expression: "user.remember"
+                }
+              ],
+              attrs: { id: "remember", type: "checkbox" },
+              domProps: {
+                checked: Array.isArray(_vm.user.remember)
+                  ? _vm._i(_vm.user.remember, null) > -1
+                  : _vm.user.remember
+              },
+              on: {
+                change: function($event) {
+                  var $$a = _vm.user.remember,
+                    $$el = $event.target,
+                    $$c = $$el.checked ? true : false
+                  if (Array.isArray($$a)) {
+                    var $$v = null,
+                      $$i = _vm._i($$a, $$v)
+                    if ($$el.checked) {
+                      $$i < 0 &&
+                        _vm.$set(_vm.user, "remember", $$a.concat([$$v]))
+                    } else {
+                      $$i > -1 &&
+                        _vm.$set(
+                          _vm.user,
+                          "remember",
+                          $$a.slice(0, $$i).concat($$a.slice($$i + 1))
+                        )
+                    }
+                  } else {
+                    _vm.$set(_vm.user, "remember", $$c)
+                  }
+                }
+              }
+            })
+          ]),
+          _vm._v(" "),
+          _c(
+            "b-col",
+            [
+              _c("router-link", { attrs: { to: "/register" } }, [
+                _vm._v("Зарегистрируйтесь")
               ])
             ],
             1
-          ),
-          _vm._v(" "),
-          _c(
-            "b-row",
-            [
-              _c("b-col", [
-                _c(
-                  "button",
-                  {
-                    on: {
-                      click: function($event) {
-                        return _vm.onSubmit()
-                      }
-                    }
-                  },
-                  [_vm._v("Войти")]
-                )
-              ]),
-              _vm._v(" "),
-              _c(
-                "b-col",
-                [
-                  _c("router-link", { attrs: { to: "/register" } }, [
-                    _vm._v("Зарегистрироваться")
-                  ])
-                ],
-                1
-              )
-            ],
-            1
           )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "b-row",
+        [
+          _c("b-col", [
+            _c("span", { staticClass: "error" }, [_vm._v(_vm._s(_vm.error))])
+          ])
         ],
         1
       )
@@ -35583,18 +35699,18 @@ var render = function() {
                 {
                   name: "model",
                   rawName: "v-model",
-                  value: _vm.login,
-                  expression: "login"
+                  value: _vm.user.login,
+                  expression: "user.login"
                 }
               ],
               attrs: { type: "text", placeholder: "Логин", required: "" },
-              domProps: { value: _vm.login },
+              domProps: { value: _vm.user.login },
               on: {
                 input: function($event) {
                   if ($event.target.composing) {
                     return
                   }
-                  _vm.login = $event.target.value
+                  _vm.$set(_vm.user, "login", $event.target.value)
                 }
               }
             })
@@ -35612,18 +35728,18 @@ var render = function() {
                 {
                   name: "model",
                   rawName: "v-model",
-                  value: _vm.password,
-                  expression: "password"
+                  value: _vm.user.password,
+                  expression: "user.password"
                 }
               ],
               attrs: { type: "password", placeholder: "Пароль", required: "" },
-              domProps: { value: _vm.password },
+              domProps: { value: _vm.user.password },
               on: {
                 input: function($event) {
                   if ($event.target.composing) {
                     return
                   }
-                  _vm.password = $event.target.value
+                  _vm.$set(_vm.user, "password", $event.target.value)
                 }
               }
             })
@@ -35641,8 +35757,8 @@ var render = function() {
                 {
                   name: "model",
                   rawName: "v-model",
-                  value: _vm.confirmedPassword,
-                  expression: "confirmedPassword"
+                  value: _vm.user.confirmedPassword,
+                  expression: "user.confirmedPassword"
                 }
               ],
               attrs: {
@@ -35651,13 +35767,13 @@ var render = function() {
                 placeholder: "Подтвердите пароль",
                 required: ""
               },
-              domProps: { value: _vm.confirmedPassword },
+              domProps: { value: _vm.user.confirmedPassword },
               on: {
                 input: function($event) {
                   if ($event.target.composing) {
                     return
                   }
-                  _vm.confirmedPassword = $event.target.value
+                  _vm.$set(_vm.user, "confirmedPassword", $event.target.value)
                 }
               }
             })
@@ -51316,6 +51432,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_Favorites_vue__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./../components/Favorites.vue */ "./resources/js/components/Favorites.vue");
 /* harmony import */ var _components_Photos_vue__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./../components/Photos.vue */ "./resources/js/components/Photos.vue");
 /* harmony import */ var _components_Register_vue__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./../components/Register.vue */ "./resources/js/components/Register.vue");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_9__);
+
 
 
 
@@ -51341,14 +51460,23 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
   }, {
     path: "/favorites",
     name: "favorites",
-    component: _components_Favorites_vue__WEBPACK_IMPORTED_MODULE_6__["default"]
+    component: _components_Favorites_vue__WEBPACK_IMPORTED_MODULE_6__["default"],
+    meta: {
+      requiresAuth: true
+    }
   }, {
     path: "/albums",
     name: "albums",
-    component: _components_Albums_vue__WEBPACK_IMPORTED_MODULE_4__["default"]
+    component: _components_Albums_vue__WEBPACK_IMPORTED_MODULE_4__["default"],
+    meta: {
+      requiresAuth: true
+    }
   }, {
     path: "/albums/:id",
-    component: _components_Photos_vue__WEBPACK_IMPORTED_MODULE_7__["default"]
+    component: _components_Photos_vue__WEBPACK_IMPORTED_MODULE_7__["default"],
+    meta: {
+      requiresAuth: true
+    }
   }, {
     path: "/register",
     name: "register",
@@ -51359,13 +51487,16 @@ router.beforeEach(function (to, from, next) {
   if (to.matched.some(function (record) {
     return record.meta.requiresAuth;
   })) {
-    if (localStorage.getItem("logged")) {
-      next({
-        path: "/login"
-      });
-    } else {
-      next();
-    }
+    axios__WEBPACK_IMPORTED_MODULE_9___default.a.get("/api/check").then(function (response) {
+      if (!response.data) {
+        console.log(response.data);
+        next({
+          path: "/login"
+        });
+      } else {
+        next();
+      }
+    });
   } else {
     next();
   }

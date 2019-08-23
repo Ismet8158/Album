@@ -7,6 +7,7 @@ import Login from "./../components/Login.vue";
 import Favorites from "./../components/Favorites.vue";
 import Photos from "./../components/Photos.vue";
 import Register from "./../components/Register.vue";
+import axios from "axios";
 
 Vue.use(Router);
 
@@ -26,16 +27,19 @@ const router = new Router({
         {
             path: "/favorites",
             name: "favorites",
-            component: Favorites
+            component: Favorites,
+            meta: { requiresAuth: true }
         },
         {
             path: "/albums",
             name: "albums",
-            component: Albums
+            component: Albums,
+            meta: { requiresAuth: true }
         },
         {
             path: "/albums/:id",
-            component: Photos
+            component: Photos,
+            meta: { requiresAuth: true }
         },
         {
             path: "/register",
@@ -47,13 +51,16 @@ const router = new Router({
 
 router.beforeEach((to, from, next) => {
     if (to.matched.some(record => record.meta.requiresAuth)) {
-        if (localStorage.getItem("logged")) {
-            next({
-                path: "/login"
-            });
-        } else {
-            next();
-        }
+        axios.get("/api/check").then(response => {
+            if (!response.data) {
+                console.log(response.data);
+                next({
+                    path: "/login"
+                });
+            } else {
+                next();
+            }
+        });
     } else {
         next();
     }

@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
 class LoginController extends Controller
 {
@@ -17,23 +18,22 @@ class LoginController extends Controller
     | to conveniently provide its functionality to your applications.
     |
     */
-
-    use AuthenticatesUsers;
-
-    /**
-     * Where to redirect users after login.
-     *
-     * @var string
-     */
-    protected $redirectTo = '/login';
-
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+    }
+
+    public function authenticate(Request $request)
+    {
+        if (Auth::attempt(['login' => $request->login, 'password' => $request->password], $request->remember))
+        {
+            $token = Auth::user()->createToken(config('app.name'))->accessToken;
+            return response(["token" => $token]);
+        }
+        else return response("Такого пользователя не существует");
+    }
+
+    public function isAuthenticated(){
+        return response(Auth::viaRemember());
     }
 }
