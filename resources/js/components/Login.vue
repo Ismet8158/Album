@@ -46,7 +46,7 @@ export default {
       axios
         .post("/api/login", this.user)
         .then(response => {
-          console.log(response.data);
+          //console.log(response.data);
           if (response.data.token === undefined) this.error = response.data;
           else this.$router.replace("/favorites");
         })

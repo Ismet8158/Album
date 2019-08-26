@@ -1,7 +1,6 @@
 import Vue from "vue";
 import Router from "vue-router";
 import App from "./../components/App.vue";
-import Home from "./../components/Home.vue";
 import Albums from "./../components/Albums.vue";
 import Login from "./../components/Login.vue";
 import Favorites from "./../components/Favorites.vue";
