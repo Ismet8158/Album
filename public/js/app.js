@@ -2019,10 +2019,12 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {};
   },
+  created: function created() {
+    this.$router.replace("/favorites");
+  },
   beforeRouteEnter: function beforeRouteEnter(to, from, next) {
     next(function (vm) {
-      console.log("hi");
-      vm.$router.push("/favorites");
+      vm.$router.replace("/favorites");
     });
   }
 });
@@ -2086,6 +2088,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       axios__WEBPACK_IMPORTED_MODULE_0___default.a.post("/api/login", this.user).then(function (response) {
+        console.log(response.data);
         if (response.data.token === undefined) _this.error = response.data;else _this.$router.replace("/favorites");
       })["catch"](function (error) {
         console.log(error);
@@ -51488,15 +51491,15 @@ router.beforeEach(function (to, from, next) {
     return record.meta.requiresAuth;
   })) {
     axios__WEBPACK_IMPORTED_MODULE_9___default.a.get("/api/check").then(function (response) {
-      if (!response.data) {
-        console.log(response.data);
+      //console.log(response.data);
+      if (response.data === "not_authenticated") {
         next({
           path: "/login"
         });
       } else {
         next();
       }
-    });
+    }); //next();
   } else {
     next();
   }
@@ -51523,8 +51526,8 @@ router.beforeEach(function (to, from, next) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\xampp\htdocs\Album\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\xampp\htdocs\Album\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\wamp64\www\Album\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\wamp64\www\Album\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

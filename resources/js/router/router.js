@@ -52,8 +52,8 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
     if (to.matched.some(record => record.meta.requiresAuth)) {
         axios.get("/api/check").then(response => {
-            if (!response.data) {
-                console.log(response.data);
+            //console.log(response.data);
+            if (response.data === "not_authenticated") {
                 next({
                     path: "/login"
                 });
@@ -61,6 +61,7 @@ router.beforeEach((to, from, next) => {
                 next();
             }
         });
+        //next();
     } else {
         next();
     }

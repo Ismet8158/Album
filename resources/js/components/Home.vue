@@ -36,10 +36,12 @@ export default {
   data() {
     return {};
   },
+  created(){
+    this.$router.replace("/favorites");
+  },
   beforeRouteEnter(to, from, next) {
     next(vm => {
-      console.log("hi");
-      vm.$router.push("/favorites");
+      vm.$router.replace("/favorites");
     });
   }
 };

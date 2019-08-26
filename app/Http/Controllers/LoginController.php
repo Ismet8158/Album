@@ -34,6 +34,9 @@ class LoginController extends Controller
     }
 
     public function isAuthenticated(){
-        return response(Auth::viaRemember());
+        if(Auth::check()){
+            return response("authenticated");
+        }
+        return response("not_authenticated");
     }
 }
