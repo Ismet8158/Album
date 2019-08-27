@@ -12,6 +12,7 @@
           <b-card-group deck>
             <b-card :key="photo.id" v-for="photo in photoList" :title="photo.title">
               <b-card-img :src="photo.url"></b-card-img>
+              <button @click="addToFavorites(photo.id)" :disabled="disable">Добавить</button>
             </b-card>
           </b-card-group>
         </b-col>
@@ -30,7 +31,8 @@ export default {
       photos: null,
       perPage: 2,
       currentPage: 1,
-      title: ""
+      title: "",
+      disable: false
     };
   },
   computed: {
@@ -50,7 +52,9 @@ export default {
   methods: {
     fetchTitle() {
       axios
-        .get(`/api/album/${this.$route.params.id}`)
+        .get(`/api/album/${this.$route.params.id}`, {
+          headers: { Authorization: `Bearer ${this.$store.state.token}` }
+        })
         .then(response => {
           this.title = response.data[0].title;
           this.fetchData();
@@ -61,9 +65,27 @@ export default {
     },
     fetchData() {
       axios
-        .get(`/api/albums/${this.$route.params.id}`)
+        .get(`/api/albums/${this.$route.params.id}`, {
+          headers: { Authorization: `Bearer ${this.$store.state.token}` }
+        })
         .then(response => {
           this.photos = response.data;
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
+    addToFavorites(photo_id) {
+      axios
+        .post(
+          "/api/favorites/",
+          { photo_id: this.photo_id, user_id: this.$store.state.user_id },
+          {
+            headers: { Authorization: `Bearer ${this.$store.state.token}` }
+          }
+        )
+        .then(response => {
+          console.log(response.data);
         })
         .catch(error => {
           console.log(error);

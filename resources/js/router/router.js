@@ -1,5 +1,6 @@
 import Vue from "vue";
 import Router from "vue-router";
+import store from "./../store/store.js";
 import App from "./../components/App.vue";
 import Albums from "./../components/Albums.vue";
 import Login from "./../components/Login.vue";
@@ -50,17 +51,13 @@ const router = new Router({
 
 router.beforeEach((to, from, next) => {
     if (to.matched.some(record => record.meta.requiresAuth)) {
-        axios.get("/api/check").then(response => {
-            //console.log(response.data);
-            if (response.data === "not_authenticated") {
-                next({
-                    path: "/login"
-                });
-            } else {
-                next();
-            }
-        });
-        //next();
+        if (!store.state.token) {
+            next({
+                path: "/login"
+            });
+        } else {
+            next();
+        }
     } else {
         next();
     }

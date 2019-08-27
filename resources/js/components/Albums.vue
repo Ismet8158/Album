@@ -37,7 +37,9 @@ export default {
   methods: {
     fetchData() {
       axios
-        .get("/api/albums")
+        .get("/api/albums", {
+          headers: { Authorization: `Bearer ${this.$store.state.token}` }
+        })
         .then(response => {
           this.albums = response.data;
         })

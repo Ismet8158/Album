@@ -46,9 +46,13 @@ export default {
       axios
         .post("/api/login", this.user)
         .then(response => {
-          //console.log(response.data);
-          if (response.data.token === undefined) this.error = response.data;
-          else this.$router.replace("/favorites");
+          if (response.data.token !== undefined) {
+            this.$store.commit("storeToken", response.data.token);
+            this.$store.commit("storeUserId", response.data.user_id);
+            this.$router.replace("/albums");
+          } else {
+            this.error = response.data;
+          }
         })
         .catch(error => {
           console.log(error);

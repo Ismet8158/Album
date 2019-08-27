@@ -12,6 +12,11 @@
     </b-row>
     <b-row>
       <b-col>
+        <input v-model="user.email" type="text" placeholder="Почта" required />
+      </b-col>
+    </b-row>
+    <b-row>
+      <b-col>
         <input
           id="confirmedPassword"
           v-model="user.confirmedPassword"
@@ -44,6 +49,7 @@ export default {
       error: "",
       user: {
         login: "",
+        email: "",
         password: "",
         confirmedPassword: ""
       }
@@ -54,9 +60,9 @@ export default {
       axios
         .post("/api/register", this.user)
         .then(response => {
-          if (response.data.token === undefined)
+          if (response.data === undefined) {
             this.error = Object.values(response.data).join(" ");
-          else this.$router.replace("/login");
+          } else this.$router.replace("/login");
         })
         .catch(error => {
           console.log(error);
