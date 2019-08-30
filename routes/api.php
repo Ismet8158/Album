@@ -22,8 +22,6 @@ Route::group(['middleware' => 'auth:api'], function(){
     Route::get('favorites/{id}', 'FavoriteController@index');
     Route::post('addfavorites', 'FavoriteController@store');
     Route::post('favorites', 'FavoriteController@delete');
-    Route::get('logout/{id}', 'LoginController@logout');
-    Route
 });
 Route::post('login', 'LoginController@authenticate');
 Route::post('register', 'RegisterController@create');

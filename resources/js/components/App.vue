@@ -54,17 +54,7 @@ export default {
       this.$store.commit("storeToken", "");
       this.$store.commit("storeUserId", "");
       this.$store.commit("storeLogin", "");
-      axios
-        .get(`/api/logout/${this.$store.state.user_id}`, {
-          headers: { Authorization: `Bearer ${this.$store.state.token}` }
-        })
-        .then(response => {
-          console.log(response.data);
-          this.$router.push("/login");
-        })
-        .catch(error => {
-          console.log(error);
-        });
+      this.$router.push("/login");
     }
   }
 };

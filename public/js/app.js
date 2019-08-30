@@ -1954,22 +1954,10 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     logout: function logout() {
-      var _this = this;
-
       this.$store.commit("storeToken", "");
       this.$store.commit("storeUserId", "");
       this.$store.commit("storeLogin", "");
-      axios.get("/api/logout/".concat(this.$store.state.user_id), {
-        headers: {
-          Authorization: "Bearer ".concat(this.$store.state.token)
-        }
-      }).then(function (response) {
-        console.log(response.data);
-
-        _this.$router.push("/login");
-      })["catch"](function (error) {
-        console.log(error);
-      });
+      this.$router.push("/login");
     }
   }
 });
