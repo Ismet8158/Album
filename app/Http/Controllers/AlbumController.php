@@ -9,12 +9,14 @@ use Illuminate\Http\Request;
 class AlbumController extends Controller
 {
     public function index(){
-        $albums = Album::all();
-        return response($albums);
+        return Album::all();
     }
 
     public function getPhotos($albumId){
-        $photos = Album::find($albumId)->photos()->get();
-        return response($photos);
+        return Album::find($albumId)->photos;
     }
+
+    public function getAlbumTitle($id){
+        return Album::find($id)->title;
+    } 
 }

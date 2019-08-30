@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -30,11 +31,23 @@ class LoginController extends Controller
 
     public function authenticate(Request $request)
     {
-        if (Auth::attempt(['login' => $request->login, 'password' => $request->password], $request->remember))
+        if (Auth::attempt(['login' => $request->login, 'password' => $request->password]))
         {
             $token = Auth::user()->createToken(config('app.name'))->accessToken;
-            return response(["token" => $token, "user_id" => Auth::user()->id]);
+            if($request->remember){
+                $user = new User;
+                $user->access_token = $token;
+                $user->save();
+            }
+            return response(["token" => $token, "user_id" => Auth::user()->id, "login" => Auth::user()->login]);
         }
         else return response("Такого пользователя не существует");
+    }
+
+    public function logout($id){
+        $user = User::find($id);
+        $user->access_token = "";
+        $user->save();
+        return response("logout");
     }
 }

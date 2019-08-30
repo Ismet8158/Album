@@ -11,10 +11,6 @@
         <button @click="onSubmit()">Войти</button>
       </b-col>
       <b-col>
-        <label for="remember">Запомнить меня</label>
-        <input id="remember" type="checkbox" v-model="user.remember" />
-      </b-col>
-      <b-col>
         <router-link to="/register">Зарегистрируйтесь</router-link>
       </b-col>
     </b-row>
@@ -49,6 +45,7 @@ export default {
           if (response.data.token !== undefined) {
             this.$store.commit("storeToken", response.data.token);
             this.$store.commit("storeUserId", response.data.user_id);
+            this.$store.commit("storeLogin", response.data.login);
             this.$router.replace("/albums");
           } else {
             this.error = response.data;

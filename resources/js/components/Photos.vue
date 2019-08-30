@@ -10,10 +10,15 @@
         <b-col>
           <b-pagination v-model="currentPage" :total-rows="rows" :per-page="perPage"></b-pagination>
           <b-card-group deck>
-            <b-card :key="photo.id" v-for="photo in photoList" :title="photo.title">
-              <b-card-img :src="photo.url"></b-card-img>
-              <button @click="addToFavorites(photo.id)" :disabled="disable">Добавить</button>
-            </b-card>
+            <Item
+              :key="photo.id"
+              v-for="photo in photoList"
+              :photo="photo"
+              buttonText="Добавить"
+              @buttonClick="addToFavorites"
+              permission="true"
+              :ref="`button${photo.id}`"
+            />
           </b-card-group>
         </b-col>
       </b-row>
@@ -23,16 +28,19 @@
 
 <script>
 import axios from "axios";
+import Item from "./Item.vue";
 
 export default {
   name: "favorites",
+  components: {
+    Item
+  },
   data() {
     return {
       photos: null,
       perPage: 2,
       currentPage: 1,
-      title: "",
-      disable: false
+      title: ""
     };
   },
   computed: {
@@ -56,7 +64,7 @@ export default {
           headers: { Authorization: `Bearer ${this.$store.state.token}` }
         })
         .then(response => {
-          this.title = response.data[0].title;
+          this.title = response.data;
           this.fetchData();
         })
         .catch(error => {
@@ -75,17 +83,18 @@ export default {
           console.log(error);
         });
     },
-    addToFavorites(photo_id) {
+    addToFavorites(id) {
+      this.disable = true;
       axios
         .post(
-          "/api/favorites/",
-          { photo_id: this.photo_id, user_id: this.$store.state.user_id },
+          "/api/addfavorites",
+          { photo_id: id, user_id: this.$store.state.user_id },
           {
             headers: { Authorization: `Bearer ${this.$store.state.token}` }
           }
         )
         .then(response => {
-          console.log(response.data);
+          this.$refs[`button${id}`][0].disableOn();
         })
         .catch(error => {
           console.log(error);

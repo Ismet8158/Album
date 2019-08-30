@@ -18,10 +18,12 @@ use Illuminate\Http\Request;
 Route::group(['middleware' => 'auth:api'], function(){
     Route::get('albums', 'AlbumController@index');
     Route::get('albums/{id}', 'AlbumController@getPhotos');
-    Route::get('album/{id}', 'PhotoController@getAlbum');
-    Route::get('check', 'LoginController@isAuthenticated');
-    Route::get('favorites', 'FavoriteController@index');
-    Route::get('addFavorites', 'FavoriteController@store');
+    Route::get('album/{id}', 'AlbumController@getAlbumTitle');
+    Route::get('favorites/{id}', 'FavoriteController@index');
+    Route::post('addfavorites', 'FavoriteController@store');
+    Route::post('favorites', 'FavoriteController@delete');
+    Route::get('logout/{id}', 'LoginController@logout');
+    Route
 });
 Route::post('login', 'LoginController@authenticate');
 Route::post('register', 'RegisterController@create');

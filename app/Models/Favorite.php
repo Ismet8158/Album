@@ -9,7 +9,7 @@ class Favorite extends Model
     public $timestamps = false;
     public $fillable = [ "photo_id", "user_id" ];
 
-    public function favorite(){
-        return $this->hasOne('App\Models\Photo');
+    public function photo(){
+        return $this->belongsTo('App\Models\Photo');
     }
 }

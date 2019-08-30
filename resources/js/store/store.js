@@ -6,7 +6,8 @@ Vue.use(Vuex);
 const store = new Vuex.Store({
     state: {
         token: "",
-        user_id: 0
+        user_id: 0,
+        login: ""
     },
     mutations: {
         storeToken(state, token) {
@@ -14,6 +15,9 @@ const store = new Vuex.Store({
         },
         storeUserId(state, user_id) {
             state.user_id = user_id;
+        },
+        storeLogin(state, login) {
+            state.login = login;
         }
     }
 });

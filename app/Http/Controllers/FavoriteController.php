@@ -7,10 +7,10 @@ use Illuminate\Http\Request;
 
 class FavoriteController extends Controller
 {
-    public function index(){
-        $favorites = Favorite::all();
+    public function index($user_id){
+        $favorites = Favorite::where("user_id", $user_id)->get();
         foreach ($favorites as $favorite) {
-           $result[] = Favorite::find($favorite->photo_id, "id")->favorite()->get();
+           $result[] = Favorite::where("photo_id", $favorite->photo_id)->first()->photo;
         }
         return response($result);
     }
@@ -21,5 +21,11 @@ class FavoriteController extends Controller
             "user_id" => $request->user_id
         ]);
         return response($favorites);
+    }
+
+    public function delete(Request $request){
+        $favorites = Favorite::where("user_id", $request->user_id)->where("photo_id", $request->photo_id);
+        $favorites->delete();
+        return response("deleted");
     }
 }
