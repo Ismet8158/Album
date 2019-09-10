@@ -9,6 +9,7 @@ class FavoriteController extends Controller
 {
     public function index($user_id){
         $favorites = Favorite::where("user_id", $user_id)->get();
+        $result = [];
         foreach ($favorites as $favorite) {
            $result[] = Favorite::where("photo_id", $favorite->photo_id)->first()->photo;
         }

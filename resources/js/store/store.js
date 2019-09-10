@@ -10,12 +10,6 @@ const store = new Vuex.Store({
         login: ""
     },
     mutations: {
-        storeToken(state, token) {
-            state.token = token;
-        },
-        storeUserId(state, user_id) {
-            state.user_id = user_id;
-        },
         storeLogin(state, login) {
             state.login = login;
         }

@@ -7,7 +7,8 @@ import Login from "./../components/Login.vue";
 import Favorites from "./../components/Favorites.vue";
 import Photos from "./../components/Photos.vue";
 import Register from "./../components/Register.vue";
-import axios from "axios";
+import Cookies from "js-cookie";
+window.axios = require("axios");
 
 Vue.use(Router);
 
@@ -50,8 +51,14 @@ const router = new Router({
 });
 
 router.beforeEach((to, from, next) => {
+    let bearer = Cookies.get("access_token");
+    if (bearer) {
+        window.axios.defaults.headers.common[
+            "Authorization"
+        ] = `Bearer ${bearer}`;
+    }
     if (to.matched.some(record => record.meta.requiresAuth)) {
-        if (!store.state.token) {
+        if (!Cookies.get("access_token")) {
             next({
                 path: "/login"
             });

@@ -1,5 +1,6 @@
 <template>
   <b-card>
+    <b-card-text>{{photo.title}}</b-card-text>
     <b-card-img :src="photo.url"></b-card-img>
     <button @click="handler(photo.id)" :disabled="disable">{{buttonText}}</button>
   </b-card>
@@ -7,6 +8,7 @@
 
 <script>
 import axios from "axios";
+import Cookies from "js-cookie";
 
 export default {
   name: "item",
@@ -17,15 +19,15 @@ export default {
   },
   data() {
     return {
-      disable: false
+      disable: false,
+      user_id: ""
     };
   },
   created() {
     if (this.permission) {
+      this.user_id = Cookies.get("user_id");
       axios
-        .get(`/api/favorites/${this.$store.state.user_id}`, {
-          headers: { Authorization: `Bearer ${this.$store.state.token}` }
-        })
+        .get(`/api/favorites/${this.user_id}`)
         .then(response => {
           response.data.filter(element => {
             if (element.id === this.photo.id) this.disableOn();

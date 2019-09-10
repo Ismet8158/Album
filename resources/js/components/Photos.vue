@@ -1,46 +1,57 @@
 <template>
-  <b-card :title="title">
-    <b-row v-if="!photos">
-      <b-col class="d-flex justify-content-center">
-        <b-spinner></b-spinner>
+  <b-container fluid>
+    <Navigation />
+    <b-row>
+      <b-col>
+        <b-card :title="title">
+          <b-row v-if="!photos">
+            <b-col class="d-flex justify-content-center">
+              <b-spinner></b-spinner>
+            </b-col>
+          </b-row>
+          <div v-else>
+            <b-row>
+              <b-col>
+                <b-pagination v-model="currentPage" :total-rows="rows" :per-page="perPage"></b-pagination>
+                <b-card-group deck>
+                  <Item
+                    :key="photo.id"
+                    v-for="photo in photoList"
+                    :photo="photo"
+                    buttonText="Добавить"
+                    @buttonClick="addToFavorites"
+                    permission="true"
+                    :ref="`button${photo.id}`"
+                  />
+                </b-card-group>
+              </b-col>
+            </b-row>
+          </div>
+        </b-card>
       </b-col>
     </b-row>
-    <div v-else>
-      <b-row>
-        <b-col>
-          <b-pagination v-model="currentPage" :total-rows="rows" :per-page="perPage"></b-pagination>
-          <b-card-group deck>
-            <Item
-              :key="photo.id"
-              v-for="photo in photoList"
-              :photo="photo"
-              buttonText="Добавить"
-              @buttonClick="addToFavorites"
-              permission="true"
-              :ref="`button${photo.id}`"
-            />
-          </b-card-group>
-        </b-col>
-      </b-row>
-    </div>
-  </b-card>
+  </b-container>
 </template>
 
 <script>
 import axios from "axios";
 import Item from "./Item.vue";
+import Navigation from "./Navigation.vue";
+import Cookies from "js-cookie";
 
 export default {
   name: "favorites",
   components: {
-    Item
+    Item,
+    Navigation
   },
   data() {
     return {
       photos: null,
       perPage: 2,
       currentPage: 1,
-      title: ""
+      title: "",
+      user_id: ""
     };
   },
   computed: {
@@ -55,14 +66,13 @@ export default {
     }
   },
   created() {
+    this.user_id = Cookies.get("user_id");
     this.fetchTitle();
   },
   methods: {
     fetchTitle() {
       axios
-        .get(`/api/album/${this.$route.params.id}`, {
-          headers: { Authorization: `Bearer ${this.$store.state.token}` }
-        })
+        .get(`/api/album/${this.$route.params.id}`)
         .then(response => {
           this.title = response.data;
           this.fetchData();
@@ -73,9 +83,7 @@ export default {
     },
     fetchData() {
       axios
-        .get(`/api/albums/${this.$route.params.id}`, {
-          headers: { Authorization: `Bearer ${this.$store.state.token}` }
-        })
+        .get(`/api/albums/${this.$route.params.id}`)
         .then(response => {
           this.photos = response.data;
         })
@@ -84,18 +92,13 @@ export default {
         });
     },
     addToFavorites(id) {
-      this.disable = true;
+      this.$refs[`button${id}`][0].disableOn();
       axios
-        .post(
-          "/api/addfavorites",
-          { photo_id: id, user_id: this.$store.state.user_id },
-          {
-            headers: { Authorization: `Bearer ${this.$store.state.token}` }
-          }
-        )
-        .then(response => {
-          this.$refs[`button${id}`][0].disableOn();
+        .post("/api/addfavorites", {
+          photo_id: id,
+          user_id: this.user_id
         })
+        .then(response => {})
         .catch(error => {
           console.log(error);
         });
