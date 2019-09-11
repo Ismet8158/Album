@@ -98,7 +98,9 @@ export default {
           photo_id: id,
           user_id: this.user_id
         })
-        .then(response => {})
+        .then(response => {
+          console.log(response.data);
+        })
         .catch(error => {
           console.log(error);
         });

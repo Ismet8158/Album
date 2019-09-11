@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Models\Favorite;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
@@ -12,23 +13,19 @@ class AlbumJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    /**
-     * Create a new job instance.
-     *
-     * @return void
-     */
-    public function __construct()
+    protected $photo_id, $user_id;
+
+    public function __construct($photo_id, $user_id)
     {
-        //
+        $this->photo_id = $photo_id;
+        $this->user_id = $user_id;
     }
 
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
-    public function handle()
+    public function handle(Favorite $favorite)
     {
-        //
+        $f = $favorite::create([
+            "photo_id" => $this->photo_id,
+            "user_id" => $this->user_id
+        ]);
     }
 }

@@ -2359,7 +2359,9 @@ __webpack_require__.r(__webpack_exports__);
       axios__WEBPACK_IMPORTED_MODULE_0___default.a.post("/api/addfavorites", {
         photo_id: id,
         user_id: this.user_id
-      }).then(function (response) {})["catch"](function (error) {
+      }).then(function (response) {
+        console.log(response.data);
+      })["catch"](function (error) {
         console.log(error);
       });
     }
