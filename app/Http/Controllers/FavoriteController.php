@@ -11,9 +11,12 @@ use Illuminate\Http\Request;
 
 class FavoriteController extends Controller
 {
+    protected $user_id;
+
     public function index($user_id){
-        $result = Cache::remember('user_id'.$user_id, Carbon::now()->addMinutes(10), function ($user_id) {
-            $favorites = Favorite::where("user_id", $user_id)->get();
+        $this->user_id = $user_id;
+        $result = Cache::remember('user_id'.$user_id, Carbon::now()->addMinutes(10), function () {
+            $favorites = Favorite::where("user_id", $this->user_id)->get();
             $res = [];
             foreach ($favorites as $favorite) {
                $res[] = Favorite::where("photo_id", $favorite->photo_id)->first()->photo;

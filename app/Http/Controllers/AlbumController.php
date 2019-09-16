@@ -11,13 +11,16 @@ use Illuminate\Http\Request;
 
 class AlbumController extends Controller
 {
+    protected $album_id;
+
     public function index(){
         return Album::all();
     }
 
     public function getPhotos($albumId){
-        $photos = Cache::remember('albums'.$albumId, Carbon::now()->addMinutes(10), function ($albumId) {
-            return Album::find($albumId)->photos;
+        $this->album_id = $albumId;
+        $photos = Cache::remember('albums'.$albumId, Carbon::now()->addMinutes(10), function () {
+            return Album::find($this->album_id)->photos;
           });
         return response([ "photos" => $photos, "admin" => Gate::denies("get-favorites")]);
     }
