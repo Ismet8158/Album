@@ -32,22 +32,23 @@ class RegisterController extends Controller
         return Validator::make($data, [
             'login' => ['required', 'string', 'max:255', 'unique:users'],
             'email' => ['required', 'string',  'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'confirmed']
+            'password' => ['required', 'string', 'confirmed'],
         ]);
     }
 
     protected function create(Request $request)
     {
-        $validator = $this->validator([ 'login' => $request->login, 'email' => $request->email, 'password' => $request->password, 'password_confirmation' => $request->confirmedPassword ]);
+        $validator = $this->validator([ 'login' => $request->login, 'email' => $request->email, 'password' => $request->password, 'password_confirmation' => $request->confirmedPassword, 'role' => $request->role ]);
         if($validator->fails()){
             return response($validator->errors());
         }
         $user = User::create([   
             'login' => $request->login,
             'email' => $request->email,
-            'password' => Hash::make($request->password)
+            'password' => Hash::make($request->password),
+            'role' => $request->role
         ]);
         $token = $user->createToken(config("app.name"))->accessToken;
-        return response($token);
+        return response($user);
     }
 }

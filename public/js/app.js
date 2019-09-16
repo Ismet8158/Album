@@ -1979,6 +1979,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 
 
 
@@ -1994,7 +1997,8 @@ __webpack_require__.r(__webpack_exports__);
       favorites: null,
       perPage: 2,
       currentPage: 1,
-      user_id: ""
+      user_id: "",
+      available: true
     };
   },
   computed: {
@@ -2016,7 +2020,7 @@ __webpack_require__.r(__webpack_exports__);
       axios__WEBPACK_IMPORTED_MODULE_0___default.a.get("/api/favorites/".concat(this.user_id)).then(function (response) {
         _this.favorites = response.data.length ? response.data : null;
       })["catch"](function (error) {
-        console.log(error);
+        _this.available = false;
       });
     },
     deleteFavorites: function deleteFavorites(id) {
@@ -2063,8 +2067,9 @@ __webpack_require__.r(__webpack_exports__);
   name: "item",
   props: {
     photo: {},
-    buttonText: "",
-    permission: ""
+    buttonText: String,
+    permission: String,
+    allowsToAdd: Boolean
   },
   data: function data() {
     return {
@@ -2076,14 +2081,18 @@ __webpack_require__.r(__webpack_exports__);
     var _this = this;
 
     if (this.permission) {
-      this.user_id = js_cookie__WEBPACK_IMPORTED_MODULE_1___default.a.get("user_id");
-      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get("/api/favorites/".concat(this.user_id)).then(function (response) {
-        response.data.filter(function (element) {
-          if (element.id === _this.photo.id) _this.disableOn();
+      if (!this.allowsToAdd) {
+        this.disableOn();
+      } else {
+        this.user_id = js_cookie__WEBPACK_IMPORTED_MODULE_1___default.a.get("user_id");
+        axios__WEBPACK_IMPORTED_MODULE_0___default.a.get("/api/favorites/".concat(this.user_id)).then(function (response) {
+          response.data.filter(function (element) {
+            if (element.id === _this.photo.id) _this.disableOn();
+          });
+        })["catch"](function (error) {
+          console.log(error);
         });
-      })["catch"](function (error) {
-        console.log(error);
-      });
+      }
     }
   },
   methods: {
@@ -2302,6 +2311,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 
 
@@ -2318,7 +2328,8 @@ __webpack_require__.r(__webpack_exports__);
       perPage: 2,
       currentPage: 1,
       title: "",
-      user_id: ""
+      user_id: "",
+      allowsToAdd: true
     };
   },
   computed: {
@@ -2349,7 +2360,8 @@ __webpack_require__.r(__webpack_exports__);
       var _this2 = this;
 
       axios__WEBPACK_IMPORTED_MODULE_0___default.a.get("/api/albums/".concat(this.$route.params.id)).then(function (response) {
-        _this2.photos = response.data;
+        _this2.photos = response.data.photos;
+        if (response.data.admin) _this2.allowsToAdd = false;
       })["catch"](function (error) {
         console.log(error);
       });
@@ -2422,6 +2434,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "register",
@@ -2432,6 +2450,7 @@ __webpack_require__.r(__webpack_exports__);
         login: "",
         email: "",
         password: "",
+        role: "",
         confirmedPassword: ""
       }
     };
@@ -2440,6 +2459,7 @@ __webpack_require__.r(__webpack_exports__);
     onSubmit: function onSubmit() {
       var _this = this;
 
+      this.user.role = this.user.role ? "admin" : "";
       axios__WEBPACK_IMPORTED_MODULE_0___default.a.post("/api/register", this.user).then(function (response) {
         if (response.data === undefined) {
           _this.error = Object.values(response.data).join(" ");
@@ -35533,61 +35553,71 @@ var render = function() {
       _c(
         "b-row",
         [
-          _c(
-            "b-col",
-            [
-              _c(
-                "b-card",
-                { attrs: { title: "Избранное" } },
+          _vm.available
+            ? _c(
+                "b-col",
                 [
-                  !_vm.favorites
-                    ? _c(
-                        "b-row",
-                        [
-                          _c(
-                            "b-col",
-                            { staticClass: "d-flex justify-content-center" },
-                            [_c("span", [_vm._v("Список пуст")])]
-                          )
-                        ],
-                        1
-                      )
-                    : _c(
-                        "div",
-                        [
-                          _c(
+                  _c(
+                    "b-card",
+                    { attrs: { title: "Избранное" } },
+                    [
+                      !_vm.favorites
+                        ? _c(
                             "b-row",
                             [
                               _c(
                                 "b-col",
+                                {
+                                  staticClass: "d-flex justify-content-center"
+                                },
+                                [_c("span", [_vm._v("Список пуст")])]
+                              )
+                            ],
+                            1
+                          )
+                        : _c(
+                            "div",
+                            [
+                              _c(
+                                "b-row",
                                 [
-                                  _c("b-pagination", {
-                                    attrs: {
-                                      "total-rows": _vm.rows,
-                                      "per-page": _vm.perPage
-                                    },
-                                    model: {
-                                      value: _vm.currentPage,
-                                      callback: function($$v) {
-                                        _vm.currentPage = $$v
-                                      },
-                                      expression: "currentPage"
-                                    }
-                                  }),
-                                  _vm._v(" "),
                                   _c(
-                                    "b-card-group",
-                                    { attrs: { deck: "" } },
-                                    _vm._l(_vm.photoList, function(favorite) {
-                                      return _c("Item", {
-                                        key: favorite.id,
+                                    "b-col",
+                                    [
+                                      _c("b-pagination", {
                                         attrs: {
-                                          photo: favorite,
-                                          buttonText: "Удалить"
+                                          "total-rows": _vm.rows,
+                                          "per-page": _vm.perPage
                                         },
-                                        on: { buttonClick: _vm.deleteFavorites }
-                                      })
-                                    }),
+                                        model: {
+                                          value: _vm.currentPage,
+                                          callback: function($$v) {
+                                            _vm.currentPage = $$v
+                                          },
+                                          expression: "currentPage"
+                                        }
+                                      }),
+                                      _vm._v(" "),
+                                      _c(
+                                        "b-card-group",
+                                        { attrs: { deck: "" } },
+                                        _vm._l(_vm.photoList, function(
+                                          favorite
+                                        ) {
+                                          return _c("Item", {
+                                            key: favorite.id,
+                                            attrs: {
+                                              photo: favorite,
+                                              buttonText: "Удалить"
+                                            },
+                                            on: {
+                                              buttonClick: _vm.deleteFavorites
+                                            }
+                                          })
+                                        }),
+                                        1
+                                      )
+                                    ],
                                     1
                                   )
                                 ],
@@ -35596,15 +35626,15 @@ var render = function() {
                             ],
                             1
                           )
-                        ],
-                        1
-                      )
+                    ],
+                    1
+                  )
                 ],
                 1
               )
-            ],
-            1
-          )
+            : _c("b-col", { staticClass: "d-flex justify-content-center" }, [
+                _c("span", [_vm._v("Недоступно")])
+              ])
         ],
         1
       )
@@ -35995,7 +36025,8 @@ var render = function() {
                                         attrs: {
                                           photo: photo,
                                           buttonText: "Добавить",
-                                          permission: "true"
+                                          permission: "true",
+                                          allowsToAdd: _vm.allowsToAdd
                                         },
                                         on: { buttonClick: _vm.addToFavorites }
                                       })
@@ -36163,6 +36194,56 @@ var render = function() {
                     return
                   }
                   _vm.$set(_vm.user, "confirmedPassword", $event.target.value)
+                }
+              }
+            })
+          ])
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "b-row",
+        [
+          _c("b-col", [
+            _c("label", { attrs: { for: "role" } }, [_vm._v("Администратор")]),
+            _vm._v(" "),
+            _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.user.role,
+                  expression: "user.role"
+                }
+              ],
+              attrs: { type: "checkbox", id: "role" },
+              domProps: {
+                checked: Array.isArray(_vm.user.role)
+                  ? _vm._i(_vm.user.role, null) > -1
+                  : _vm.user.role
+              },
+              on: {
+                change: function($event) {
+                  var $$a = _vm.user.role,
+                    $$el = $event.target,
+                    $$c = $$el.checked ? true : false
+                  if (Array.isArray($$a)) {
+                    var $$v = null,
+                      $$i = _vm._i($$a, $$v)
+                    if ($$el.checked) {
+                      $$i < 0 && _vm.$set(_vm.user, "role", $$a.concat([$$v]))
+                    } else {
+                      $$i > -1 &&
+                        _vm.$set(
+                          _vm.user,
+                          "role",
+                          $$a.slice(0, $$i).concat($$a.slice($$i + 1))
+                        )
+                    }
+                  } else {
+                    _vm.$set(_vm.user, "role", $$c)
+                  }
                 }
               }
             })

@@ -2,7 +2,7 @@
   <b-container fluid>
     <Navigation />
     <b-row>
-      <b-col>
+      <b-col v-if="available">
         <b-card title="Избранное">
           <b-row v-if="!favorites">
             <b-col class="d-flex justify-content-center">
@@ -27,6 +27,9 @@
           </div>
         </b-card>
       </b-col>
+      <b-col class="d-flex justify-content-center" v-else>
+        <span>Недоступно</span>
+      </b-col>
     </b-row>
   </b-container>
 </template>
@@ -48,7 +51,8 @@ export default {
       favorites: null,
       perPage: 2,
       currentPage: 1,
-      user_id: ""
+      user_id: "",
+      available: true
     };
   },
   computed: {
@@ -74,7 +78,7 @@ export default {
           this.favorites = response.data.length ? response.data : null;
         })
         .catch(error => {
-          console.log(error);
+          this.available = false;
         });
     },
     deleteFavorites(id) {

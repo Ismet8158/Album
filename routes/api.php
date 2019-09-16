@@ -19,9 +19,12 @@ Route::group(['middleware' => 'auth:api'], function(){
     Route::get('albums', 'AlbumController@index');
     Route::get('albums/{id}', 'AlbumController@getPhotos');
     Route::get('album/{id}', 'AlbumController@getAlbumTitle');
-    Route::get('favorites/{id}', 'FavoriteController@index');
-    Route::post('addfavorites', 'FavoriteController@store');
-    Route::post('favorites', 'FavoriteController@delete');
+    Route::group(['middleware' => 'role:admin'], function(){
+        Route::get('favorites/{id}', 'FavoriteController@index');
+        Route::post('addfavorites', 'FavoriteController@store');
+        Route::post('favorites', 'FavoriteController@delete');
+    }
+    );
 });
 Route::post('login', 'LoginController@authenticate');
 Route::post('register', 'RegisterController@create');

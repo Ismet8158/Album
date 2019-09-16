@@ -12,5 +12,5 @@ class User extends Authenticatable
     use HasApiTokens, Notifiable;
     
     public $timestamps = false;
-    public $fillable = [ "login", "email", "password" ];
+    public $fillable = [ "login", "email", "password", "role" ];
 }

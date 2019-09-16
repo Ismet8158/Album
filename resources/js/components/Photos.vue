@@ -21,6 +21,7 @@
                     buttonText="Добавить"
                     @buttonClick="addToFavorites"
                     permission="true"
+                    :allowsToAdd="allowsToAdd"
                     :ref="`button${photo.id}`"
                   />
                 </b-card-group>
@@ -51,7 +52,8 @@ export default {
       perPage: 2,
       currentPage: 1,
       title: "",
-      user_id: ""
+      user_id: "",
+      allowsToAdd: true
     };
   },
   computed: {
@@ -85,7 +87,8 @@ export default {
       axios
         .get(`/api/albums/${this.$route.params.id}`)
         .then(response => {
-          this.photos = response.data;
+          this.photos = response.data.photos;
+          if (response.data.admin) this.allowsToAdd = false;
         })
         .catch(error => {
           console.log(error);

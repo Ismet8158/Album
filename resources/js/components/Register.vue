@@ -28,6 +28,12 @@
     </b-row>
     <b-row>
       <b-col>
+        <label for="role">Администратор</label>
+        <input type="checkbox" id="role" v-model="user.role" />
+      </b-col>
+    </b-row>
+    <b-row>
+      <b-col>
         <button @click="onSubmit">Зарегистрироваться</button>
       </b-col>
     </b-row>
@@ -51,12 +57,14 @@ export default {
         login: "",
         email: "",
         password: "",
+        role: "",
         confirmedPassword: ""
       }
     };
   },
   methods: {
     onSubmit() {
+      this.user.role = this.user.role ? "admin" : "";
       axios
         .post("/api/register", this.user)
         .then(response => {

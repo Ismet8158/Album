@@ -14,8 +14,9 @@ export default {
   name: "item",
   props: {
     photo: {},
-    buttonText: "",
-    permission: ""
+    buttonText: String,
+    permission: String,
+    allowsToAdd: Boolean
   },
   data() {
     return {
@@ -25,17 +26,21 @@ export default {
   },
   created() {
     if (this.permission) {
-      this.user_id = Cookies.get("user_id");
-      axios
-        .get(`/api/favorites/${this.user_id}`)
-        .then(response => {
-          response.data.filter(element => {
-            if (element.id === this.photo.id) this.disableOn();
+      if (!this.allowsToAdd) {
+        this.disableOn();
+      } else {
+        this.user_id = Cookies.get("user_id");
+        axios
+          .get(`/api/favorites/${this.user_id}`)
+          .then(response => {
+            response.data.filter(element => {
+              if (element.id === this.photo.id) this.disableOn();
+            });
+          })
+          .catch(error => {
+            console.log(error);
           });
-        })
-        .catch(error => {
-          console.log(error);
-        });
+      }
     }
   },
   methods: {
